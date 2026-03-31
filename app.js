@@ -1,4 +1,5 @@
 const STORAGE_KEY = "training-picker.trainings";
+const RECENT_PICK_LIMIT = 2;
 
 const form = document.getElementById("training-form");
 const titleInput = document.getElementById("training-title");
@@ -24,6 +25,7 @@ let trainings = loadTrainings();
 let editingId = null;
 let deferredInstallPrompt = null;
 let lastPickedTraining = null;
+let recentPickIds = [];
 
 function loadTrainings() {
   try {
@@ -232,6 +234,8 @@ function deleteTraining(id) {
     closeTrainingModal();
   }
 
+  recentPickIds = recentPickIds.filter((entryId) => entryId !== id);
+
   renderTrainings();
   setFormMessage(`Deleted “${training.title}”.`, "success");
 }
@@ -261,6 +265,35 @@ function showRandomTraining(training) {
   openTrainingModal(training);
 }
 
+function getRandomTrainingChoice() {
+  if (trainings.length === 1) {
+    return trainings[0];
+  }
+
+  const recentLimit = Math.min(RECENT_PICK_LIMIT, Math.max(trainings.length - 1, 1));
+  const blockedIds = recentPickIds.slice(0, recentLimit);
+
+  let availableTrainings = trainings.filter(
+    (training) => !blockedIds.includes(training.id)
+  );
+
+  if (availableTrainings.length === 0) {
+    availableTrainings = trainings.filter(
+      (training) => training.id !== recentPickIds[0]
+    );
+  }
+
+  const randomIndex = Math.floor(Math.random() * availableTrainings.length);
+  return availableTrainings[randomIndex];
+}
+
+function rememberPickedTraining(trainingId) {
+  recentPickIds = [trainingId, ...recentPickIds.filter((id) => id !== trainingId)].slice(
+    0,
+    RECENT_PICK_LIMIT
+  );
+}
+
 function pickRandomTraining() {
   if (trainings.length === 0) {
     updatePickerPlaceholder();
@@ -268,8 +301,9 @@ function pickRandomTraining() {
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * trainings.length);
-  showRandomTraining(trainings[randomIndex]);
+  const selectedTraining = getRandomTrainingChoice();
+  rememberPickedTraining(selectedTraining.id);
+  showRandomTraining(selectedTraining);
 }
 
 async function handleInstallClick() {
