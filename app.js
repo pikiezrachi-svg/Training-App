@@ -64,16 +64,33 @@ function persistCompletionCount() {
   localStorage.setItem(COMPLETION_COUNT_STORAGE_KEY, String(completionCount));
 }
 
-function updateCompletionCountDisplay() {
+function animateCompletionCount() {
+  if (!completionCountElement) {
+    return;
+  }
+
+  completionCountElement.classList.remove("bump");
+  window.requestAnimationFrame(() => {
+    completionCountElement.classList.add("bump");
+    window.setTimeout(() => {
+      completionCountElement.classList.remove("bump");
+    }, 300);
+  });
+}
+
+function updateCompletionCountDisplay(shouldAnimate = false) {
   if (completionCountElement) {
     completionCountElement.textContent = String(completionCount);
+    if (shouldAnimate) {
+      animateCompletionCount();
+    }
   }
 }
 
-function changeCompletionCount(amount) {
+function changeCompletionCount(amount, shouldAnimate = false) {
   completionCount = Math.max(0, completionCount + amount);
   persistCompletionCount();
-  updateCompletionCountDisplay();
+  updateCompletionCountDisplay(shouldAnimate);
 }
 
 function loadRandomizerState() {
@@ -205,31 +222,36 @@ function handleCounterAdjustment(amount) {
     return;
   }
 
-  changeCompletionCount(amount);
+  changeCompletionCount(amount, true);
   setFormMessage(
     amount > 0 ? "Nice work — 1 point added." : "1 point was removed.",
     "success"
   );
 }
 
-function scrollToProgressPanel() {
+function scrollToProgressPanel(onComplete) {
   if (!progressPanel) {
+    onComplete?.();
     return;
   }
 
   progressPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  window.setTimeout(() => {
+    onComplete?.();
+  }, 650);
 }
 
 function handleTrainingCompleted() {
   completeTrainingButton?.setAttribute("disabled", "disabled");
-  changeCompletionCount(1);
   setFormMessage("Great job! You completed a training and earned 1 point.", "success");
   launchCelebration();
 
   window.setTimeout(() => {
     closeTrainingModal();
-    scrollToProgressPanel();
-    completeTrainingButton?.removeAttribute("disabled");
+    scrollToProgressPanel(() => {
+      changeCompletionCount(1, true);
+      completeTrainingButton?.removeAttribute("disabled");
+    });
   }, 900);
 }
 
