@@ -1,4 +1,4 @@
-const CACHE_NAME = "training-picker-v2";
+const CACHE_NAME = "training-picker-v3";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -30,6 +30,24 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  const isPageRequest =
+    event.request.mode === "navigate" || event.request.destination === "document";
+
+  if (isPageRequest) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put("./index.html", responseClone);
+          });
+          return networkResponse;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
     return;
   }
 
