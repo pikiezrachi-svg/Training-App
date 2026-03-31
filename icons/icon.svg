@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Training Picker icon">
+  <rect width="512" height="512" rx="96" fill="#3767ff" />
+  <rect x="76" y="92" width="360" height="328" rx="40" fill="#ffffff" opacity="0.16" />
+  <path d="M170 156h172c14 0 26 12 26 26v148c0 14-12 26-26 26H170c-14 0-26-12-26-26V182c0-14 12-26 26-26Z" fill="#ffffff" />
+  <path d="M200 210h112M200 256h112M200 302h78" stroke="#3767ff" stroke-width="24" stroke-linecap="round" />
+  <circle cx="358" cy="290" r="52" fill="#0f49db" />
+  <path d="M358 258v64M326 290h64" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+</svg>

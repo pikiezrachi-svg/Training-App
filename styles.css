@@ -1,0 +1,398 @@
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --panel-border: #d8e2f0;
+  --text: #142033;
+  --muted: #5f6f86;
+  --primary: #3767ff;
+  --primary-dark: #294fd0;
+  --success: #13824d;
+  --warning: #a15c00;
+  --danger: #c23d3d;
+  --shadow: 0 16px 40px rgba(20, 32, 51, 0.08);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #eef3ff 0%, var(--bg) 100%);
+  color: var(--text);
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.hero {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow,
+.section-step {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 0.35rem;
+}
+
+.hero h1,
+.panel h2 {
+  margin: 0;
+}
+
+.hero-copy {
+  max-width: 60ch;
+  color: var(--muted);
+  margin-top: 0.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.install-hint,
+.picker-note {
+  margin: 0;
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 1.1rem;
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.training-form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.training-form label {
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #cfd8e5;
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+  background: #fbfcff;
+  color: var(--text);
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid rgba(55, 103, 255, 0.2);
+  border-color: var(--primary);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 220px;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.15rem;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+#save-button,
+.pick-button {
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+}
+
+#save-button:hover,
+.pick-button:hover {
+  background: var(--primary-dark);
+}
+
+.pick-button {
+  width: min(100%, 320px);
+}
+
+.button-secondary {
+  background: #e9eefc;
+  color: var(--text);
+}
+
+.form-message {
+  min-height: 1.25rem;
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+}
+
+.form-message.success {
+  color: var(--success);
+}
+
+.form-message.warning {
+  color: var(--warning);
+}
+
+.badge {
+  background: #edf2ff;
+  color: var(--primary-dark);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.empty-state,
+.random-result.empty-result {
+  padding: 1rem;
+  border: 1px dashed #c9d4e6;
+  border-radius: 14px;
+  color: var(--muted);
+  background: #fbfcff;
+}
+
+.training-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.training-card {
+  border: 1px solid #d8e2f0;
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: #fbfcff;
+}
+
+.training-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.training-card-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.training-preview {
+  color: var(--muted);
+  margin: 0.6rem 0;
+  white-space: pre-wrap;
+}
+
+.training-meta {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  background: #edf2ff;
+  color: var(--text);
+  padding-inline: 0.95rem;
+}
+
+.action-button.delete {
+  background: #ffe8e8;
+  color: var(--danger);
+}
+
+.picker-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.random-result {
+  border: 1px solid #d8e2f0;
+  border-radius: 14px;
+  padding: 1rem;
+  background: #fbfcff;
+}
+
+.random-result h3 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.random-result p {
+  margin-top: 0;
+  color: var(--muted);
+}
+
+.result-content {
+  margin: 0 0 0.75rem;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.icon-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: #edf2ff;
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 32, 51, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.modal-window {
+  width: min(760px, 100%);
+  max-height: min(90vh, 900px);
+  overflow: auto;
+  background: var(--panel);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 24px 60px rgba(20, 32, 51, 0.28);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.modal-note {
+  color: var(--muted);
+  margin: 0.6rem 0 1rem;
+}
+
+.modal-content {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 14px;
+  background: #fbfcff;
+  border: 1px solid #d8e2f0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-header,
+  .training-card-header,
+  .modal-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    width: min(100%, calc(100% - 1rem));
+    padding-top: 1rem;
+  }
+
+  .panel {
+    padding: 0.9rem;
+  }
+
+  .hero-actions,
+  .form-actions,
+  .card-actions,
+  .modal-actions {
+    align-items: stretch;
+  }
+
+  .hero-actions > *,
+  .form-actions > *,
+  .card-actions > *,
+  .modal-actions > * {
+    width: 100%;
+  }
+
+  .modal-window {
+    max-height: 94vh;
+    padding: 0.9rem;
+  }
+}

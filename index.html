@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#3767ff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Training Picker" />
+    <title>Training Picker</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <p class="eyebrow">Training planner</p>
+        <h1>Build your training list and let the app choose for you</h1>
+        <p class="hero-copy">
+          Paste each training, give it a title, and press one button to pick your
+          session for today.
+        </p>
+        <div class="hero-actions">
+          <button id="install-button" class="button-secondary" type="button">
+            Install on phone
+          </button>
+          <p class="install-hint">
+            After you publish this page online, open it on your phone and add it to
+            your home screen like an app.
+          </p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-step">Step 1</p>
+              <h2>Add or edit a training</h2>
+            </div>
+          </div>
+
+          <form id="training-form" class="training-form">
+            <label for="training-title">Training title</label>
+            <input
+              id="training-title"
+              name="training-title"
+              type="text"
+              placeholder="Example: Full body strength"
+              maxlength="80"
+              required
+            />
+
+            <label for="training-content">Training text</label>
+            <textarea
+              id="training-content"
+              name="training-content"
+              rows="10"
+              placeholder="Paste the full drills here..."
+              required
+            ></textarea>
+
+            <div class="form-actions">
+              <button type="submit" id="save-button">Save training</button>
+              <button type="button" id="cancel-edit" class="button-secondary" hidden>
+                Cancel edit
+              </button>
+            </div>
+
+            <p id="form-message" class="form-message" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-step">Step 2</p>
+              <h2>Your saved trainings</h2>
+            </div>
+            <span id="training-count" class="badge">0 trainings</span>
+          </div>
+
+          <div id="empty-state" class="empty-state">
+            You have not added any trainings yet.
+          </div>
+          <ul id="training-list" class="training-list"></ul>
+        </section>
+      </main>
+
+      <section class="panel picker-panel">
+        <div class="panel-header">
+          <div>
+            <p class="section-step">Step 3</p>
+            <h2>Choose today’s training</h2>
+          </div>
+        </div>
+
+        <p class="picker-note">
+          The selected training opens in a focused reading window, so you do not tap
+          the random button by mistake while working out.
+        </p>
+
+        <button id="pick-button" class="pick-button" type="button">
+          Pick a random training
+        </button>
+
+        <div id="random-result" class="random-result empty-result">
+          Save at least one training to start picking.
+        </div>
+      </section>
+    </div>
+
+    <div id="training-modal" class="modal-overlay" hidden>
+      <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="section-step">Selected training</p>
+            <h2 id="modal-title">Training</h2>
+          </div>
+          <button id="close-modal" class="icon-button" type="button" aria-label="Close training window">
+            ×
+          </button>
+        </div>
+
+        <p class="modal-note">
+          Keep this window open while you read the workout.
+        </p>
+
+        <pre id="modal-content" class="modal-content"></pre>
+
+        <div class="modal-actions">
+          <button id="close-modal-footer" class="button-secondary" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
