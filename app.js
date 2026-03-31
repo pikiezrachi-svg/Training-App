@@ -1,5 +1,6 @@
 const STORAGE_KEY = "training-picker.trainings";
 const RECENT_PICKS_STORAGE_KEY = "training-picker.recent-picks";
+const RANDOMIZER_STATE_STORAGE_KEY = "training-picker.randomizer-state";
 const RECENT_PICK_LIMIT = 2;
 
 const form = document.getElementById("training-form");
@@ -11,6 +12,8 @@ const formMessage = document.getElementById("form-message");
 const trainingList = document.getElementById("training-list");
 const emptyState = document.getElementById("empty-state");
 const trainingCount = document.getElementById("training-count");
+const toggleEditorButton = document.getElementById("toggle-editor");
+const editorContent = document.getElementById("editor-content");
 const toggleTrainingsButton = document.getElementById("toggle-trainings");
 const trainingsContent = document.getElementById("trainings-content");
 const pickButton = document.getElementById("pick-button");
@@ -27,6 +30,7 @@ let editingId = null;
 let deferredInstallPrompt = null;
 let lastPickedTraining = null;
 let recentPickIds = loadRecentPickIds();
+let randomizerState = loadRandomizerState();
 
 function loadTrainings() {
   try {
@@ -41,6 +45,21 @@ function loadTrainings() {
 
 function persistTrainings() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trainings));
+}
+
+function loadRandomizerState() {
+  try {
+    const stored = localStorage.getItem(RANDOMIZER_STATE_STORAGE_KEY);
+    const parsed = stored ? JSON.parse(stored) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    console.error("Failed to load randomizer state", error);
+    return {};
+  }
+}
+
+function persistRandomizerState() {
+  localStorage.setItem(RANDOMIZER_STATE_STORAGE_KEY, JSON.stringify(randomizerState));
 }
 
 function loadRecentPickIds() {
@@ -64,6 +83,22 @@ function syncRecentPicksWithTrainings() {
     .filter((id) => validIds.has(id))
     .slice(0, RECENT_PICK_LIMIT);
   persistRecentPickIds();
+}
+
+function syncRandomizerStateWithTrainings() {
+  const validIds = new Set(trainings.map((training) => training.id));
+  const nextState = {};
+
+  trainings.forEach((training) => {
+    nextState[training.id] = {
+      skipStreak: randomizerState[training.id]?.skipStreak ?? 0,
+      pickCount: randomizerState[training.id]?.pickCount ?? 0,
+      lastPickedAt: randomizerState[training.id]?.lastPickedAt ?? null,
+    };
+  });
+
+  randomizerState = nextState;
+  persistRandomizerState();
 }
 
 function setFormMessage(message = "", type = "") {
@@ -102,6 +137,24 @@ function resetForm() {
   form.reset();
   saveButton.textContent = "Save training";
   cancelEditButton.hidden = true;
+}
+
+function setEditorCollapsed(isCollapsed) {
+  if (!editorContent || !toggleEditorButton) {
+    return;
+  }
+
+  editorContent.hidden = isCollapsed;
+  toggleEditorButton.textContent = isCollapsed ? "Show form" : "Hide form";
+  toggleEditorButton.setAttribute("aria-expanded", String(!isCollapsed));
+}
+
+function toggleEditorVisibility() {
+  if (!editorContent) {
+    return;
+  }
+
+  setEditorCollapsed(!editorContent.hidden);
 }
 
 function setTrainingsCollapsed(isCollapsed) {
@@ -152,7 +205,9 @@ function updatePickerPlaceholder() {
     pickButton.disabled = true;
     lastPickedTraining = null;
     recentPickIds = [];
+    randomizerState = {};
     persistRecentPickIds();
+    persistRandomizerState();
     closeTrainingModal();
     return;
   }
@@ -176,6 +231,7 @@ function createActionButton(label, onClick, extraClass = "") {
 
 function renderTrainings() {
   syncRecentPicksWithTrainings();
+  syncRandomizerStateWithTrainings();
   trainingList.innerHTML = "";
   trainingCount.textContent = formatCount(trainings.length);
 
@@ -229,6 +285,7 @@ function startEdit(id) {
     return;
   }
 
+  setEditorCollapsed(false);
   editingId = id;
   titleInput.value = training.title;
   contentInput.value = training.content;
@@ -262,7 +319,9 @@ function deleteTraining(id) {
   }
 
   recentPickIds = recentPickIds.filter((entryId) => entryId !== id);
+  delete randomizerState[id];
   persistRecentPickIds();
+  persistRandomizerState();
 
   renderTrainings();
   setFormMessage(`Deleted “${training.title}”.`, "success");
@@ -293,6 +352,26 @@ function showRandomTraining(training) {
   openTrainingModal(training);
 }
 
+function chooseWeightedTraining(candidates) {
+  const weightedCandidates = candidates.map((training) => {
+    const skipStreak = randomizerState[training.id]?.skipStreak ?? 0;
+    const weight = 1 + skipStreak * 2;
+    return { training, weight };
+  });
+
+  const totalWeight = weightedCandidates.reduce((sum, entry) => sum + entry.weight, 0);
+  let threshold = Math.random() * totalWeight;
+
+  for (const entry of weightedCandidates) {
+    threshold -= entry.weight;
+    if (threshold <= 0) {
+      return entry.training;
+    }
+  }
+
+  return weightedCandidates[weightedCandidates.length - 1].training;
+}
+
 function getRandomTrainingChoice() {
   if (trainings.length === 1) {
     return trainings[0];
@@ -311,8 +390,24 @@ function getRandomTrainingChoice() {
     );
   }
 
-  const randomIndex = Math.floor(Math.random() * availableTrainings.length);
-  return availableTrainings[randomIndex];
+  return chooseWeightedTraining(availableTrainings);
+}
+
+function updateRandomizerState(selectedTrainingId) {
+  syncRandomizerStateWithTrainings();
+
+  Object.keys(randomizerState).forEach((trainingId) => {
+    if (trainingId === selectedTrainingId) {
+      randomizerState[trainingId].skipStreak = 0;
+      randomizerState[trainingId].pickCount += 1;
+      randomizerState[trainingId].lastPickedAt = new Date().toISOString();
+      return;
+    }
+
+    randomizerState[trainingId].skipStreak += 1;
+  });
+
+  persistRandomizerState();
 }
 
 function rememberPickedTraining(trainingId) {
@@ -331,6 +426,7 @@ function pickRandomTraining() {
   }
 
   const selectedTraining = getRandomTrainingChoice();
+  updateRandomizerState(selectedTraining.id);
   rememberPickedTraining(selectedTraining.id);
   showRandomTraining(selectedTraining);
 }
@@ -428,6 +524,7 @@ cancelEditButton?.addEventListener("click", () => {
 });
 
 pickButton?.addEventListener("click", pickRandomTraining);
+toggleEditorButton?.addEventListener("click", toggleEditorVisibility);
 toggleTrainingsButton?.addEventListener("click", toggleTrainingsVisibility);
 installButton?.addEventListener("click", handleInstallClick);
 closeModalButton?.addEventListener("click", (event) => {
@@ -461,5 +558,7 @@ window.addEventListener("appinstalled", () => {
 });
 
 renderTrainings();
+setEditorCollapsed(true);
+setTrainingsCollapsed(true);
 updatePickerPlaceholder();
 registerServiceWorker();

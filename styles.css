@@ -112,6 +112,10 @@ textarea {
   flex-wrap: wrap;
 }
 
+.collapsible-panel .panel-header {
+  align-items: center;
+}
+
 .toggle-button {
   white-space: nowrap;
 }

@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Training Picker" />
     <title>Training Picker</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20260331-2" />
-    <link rel="icon" href="icons/icon.svg?v=20260331-2" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icons/icon.svg?v=20260331-2" />
-    <link rel="stylesheet" href="styles.css?v=20260331-2" />
+    <link rel="manifest" href="manifest.webmanifest?v=20260331-3" />
+    <link rel="icon" href="icons/icon.svg?v=20260331-3" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon.svg?v=20260331-3" />
+    <link rel="stylesheet" href="styles.css?v=20260331-3" />
   </head>
   <body>
     <div class="app-shell">
@@ -34,43 +34,55 @@
       </header>
 
       <main class="layout">
-        <section class="panel">
+        <section class="panel collapsible-panel">
           <div class="panel-header">
             <div>
               <p class="section-step">Step 1</p>
               <h2>Add or edit a training</h2>
             </div>
-          </div>
-
-          <form id="training-form" class="training-form">
-            <label for="training-title">Training title</label>
-            <input
-              id="training-title"
-              name="training-title"
-              type="text"
-              placeholder="Example: Full body strength"
-              maxlength="80"
-              required
-            />
-
-            <label for="training-content">Training text</label>
-            <textarea
-              id="training-content"
-              name="training-content"
-              rows="10"
-              placeholder="Paste the full drills here..."
-              required
-            ></textarea>
-
-            <div class="form-actions">
-              <button type="submit" id="save-button">Save training</button>
-              <button type="button" id="cancel-edit" class="button-secondary" hidden>
-                Cancel edit
+            <div class="saved-training-tools">
+              <button
+                id="toggle-editor"
+                class="button-secondary toggle-button"
+                type="button"
+                aria-expanded="false"
+              >
+                Show form
               </button>
             </div>
+          </div>
 
-            <p id="form-message" class="form-message" aria-live="polite"></p>
-          </form>
+          <div id="editor-content" class="collapsible-content" hidden>
+            <form id="training-form" class="training-form">
+              <label for="training-title">Training title</label>
+              <input
+                id="training-title"
+                name="training-title"
+                type="text"
+                placeholder="Example: Full body strength"
+                maxlength="80"
+                required
+              />
+
+              <label for="training-content">Training text</label>
+              <textarea
+                id="training-content"
+                name="training-content"
+                rows="10"
+                placeholder="Paste the full drills here..."
+                required
+              ></textarea>
+
+              <div class="form-actions">
+                <button type="submit" id="save-button">Save training</button>
+                <button type="button" id="cancel-edit" class="button-secondary" hidden>
+                  Cancel edit
+                </button>
+              </div>
+
+              <p id="form-message" class="form-message" aria-live="polite"></p>
+            </form>
+          </div>
         </section>
 
         <section class="panel collapsible-panel">
@@ -85,14 +97,14 @@
                 id="toggle-trainings"
                 class="button-secondary toggle-button"
                 type="button"
-                aria-expanded="true"
+                aria-expanded="false"
               >
-                Hide list
+                Show list
               </button>
             </div>
           </div>
 
-          <div id="trainings-content" class="collapsible-content">
+          <div id="trainings-content" class="collapsible-content" hidden>
             <div id="empty-state" class="empty-state">
               You have not added any trainings yet.
             </div>
@@ -150,6 +162,6 @@
       </div>
     </div>
 
-    <script src="app.js?v=20260331-2"></script>
+    <script src="app.js?v=20260331-3"></script>
   </body>
 </html>
