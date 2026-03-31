@@ -10,6 +10,7 @@ const contentInput = document.getElementById("training-content");
 const saveButton = document.getElementById("save-button");
 const cancelEditButton = document.getElementById("cancel-edit");
 const formMessage = document.getElementById("form-message");
+const progressPanel = document.getElementById("progress-panel");
 const completionCountElement = document.getElementById("completion-count");
 const addPointButton = document.getElementById("add-point");
 const subtractPointButton = document.getElementById("subtract-point");
@@ -211,6 +212,14 @@ function handleCounterAdjustment(amount) {
   );
 }
 
+function scrollToProgressPanel() {
+  if (!progressPanel) {
+    return;
+  }
+
+  progressPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function handleTrainingCompleted() {
   completeTrainingButton?.setAttribute("disabled", "disabled");
   changeCompletionCount(1);
@@ -219,6 +228,7 @@ function handleTrainingCompleted() {
 
   window.setTimeout(() => {
     closeTrainingModal();
+    scrollToProgressPanel();
     completeTrainingButton?.removeAttribute("disabled");
   }, 900);
 }
