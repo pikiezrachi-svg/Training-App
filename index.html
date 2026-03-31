@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Training Picker" />
     <title>Training Picker</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20260331-3" />
-    <link rel="icon" href="icons/icon.svg?v=20260331-3" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icons/icon.svg?v=20260331-3" />
-    <link rel="stylesheet" href="styles.css?v=20260331-3" />
+    <link rel="manifest" href="manifest.webmanifest?v=20260331-4" />
+    <link rel="icon" href="icons/icon.svg?v=20260331-4" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon.svg?v=20260331-4" />
+    <link rel="stylesheet" href="styles.css?v=20260331-4" />
   </head>
   <body>
     <div class="app-shell">
@@ -32,6 +32,31 @@
           </p>
         </div>
       </header>
+
+      <section class="panel stats-panel">
+        <div class="panel-header">
+          <div>
+            <p class="section-step">Progress</p>
+            <h2>Your completed trainings</h2>
+          </div>
+        </div>
+
+        <div class="counter-row">
+          <div class="counter-display">
+            <span id="completion-count" class="completion-count">0</span>
+            <span class="counter-label">completed sessions / points</span>
+          </div>
+
+          <div class="counter-actions">
+            <button id="add-point" class="counter-button plus" type="button">
+              +1 point
+            </button>
+            <button id="subtract-point" class="counter-button minus" type="button">
+              -1 point
+            </button>
+          </div>
+        </div>
+      </section>
 
       <main class="layout">
         <section class="panel collapsible-panel">
@@ -155,6 +180,9 @@
         <pre id="modal-content" class="modal-content"></pre>
 
         <div class="modal-actions">
+          <button id="complete-training" class="complete-button" type="button">
+            I completed this training ✅
+          </button>
           <button id="close-modal-footer" class="button-secondary" type="button">
             Close
           </button>
@@ -162,6 +190,8 @@
       </div>
     </div>
 
-    <script src="app.js?v=20260331-3"></script>
+    <div id="celebration-layer" class="celebration-layer" aria-hidden="true"></div>
+
+    <script src="app.js?v=20260331-4"></script>
   </body>
 </html>

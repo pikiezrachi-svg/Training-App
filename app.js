@@ -1,6 +1,7 @@
 const STORAGE_KEY = "training-picker.trainings";
 const RECENT_PICKS_STORAGE_KEY = "training-picker.recent-picks";
 const RANDOMIZER_STATE_STORAGE_KEY = "training-picker.randomizer-state";
+const COMPLETION_COUNT_STORAGE_KEY = "training-picker.completion-count";
 const RECENT_PICK_LIMIT = 2;
 
 const form = document.getElementById("training-form");
@@ -9,6 +10,9 @@ const contentInput = document.getElementById("training-content");
 const saveButton = document.getElementById("save-button");
 const cancelEditButton = document.getElementById("cancel-edit");
 const formMessage = document.getElementById("form-message");
+const completionCountElement = document.getElementById("completion-count");
+const addPointButton = document.getElementById("add-point");
+const subtractPointButton = document.getElementById("subtract-point");
 const trainingList = document.getElementById("training-list");
 const emptyState = document.getElementById("empty-state");
 const trainingCount = document.getElementById("training-count");
@@ -24,8 +28,11 @@ const modalTitle = document.getElementById("modal-title");
 const modalContent = document.getElementById("modal-content");
 const closeModalButton = document.getElementById("close-modal");
 const closeModalFooterButton = document.getElementById("close-modal-footer");
+const completeTrainingButton = document.getElementById("complete-training");
+const celebrationLayer = document.getElementById("celebration-layer");
 
 let trainings = loadTrainings();
+let completionCount = loadCompletionCount();
 let editingId = null;
 let deferredInstallPrompt = null;
 let lastPickedTraining = null;
@@ -45,6 +52,27 @@ function loadTrainings() {
 
 function persistTrainings() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trainings));
+}
+
+function loadCompletionCount() {
+  const stored = Number.parseInt(localStorage.getItem(COMPLETION_COUNT_STORAGE_KEY) || "0", 10);
+  return Number.isFinite(stored) && stored > 0 ? stored : 0;
+}
+
+function persistCompletionCount() {
+  localStorage.setItem(COMPLETION_COUNT_STORAGE_KEY, String(completionCount));
+}
+
+function updateCompletionCountDisplay() {
+  if (completionCountElement) {
+    completionCountElement.textContent = String(completionCount);
+  }
+}
+
+function changeCompletionCount(amount) {
+  completionCount = Math.max(0, completionCount + amount);
+  persistCompletionCount();
+  updateCompletionCountDisplay();
 }
 
 function loadRandomizerState() {
@@ -139,6 +167,62 @@ function resetForm() {
   cancelEditButton.hidden = true;
 }
 
+function launchCelebration() {
+  if (!celebrationLayer) {
+    return;
+  }
+
+  celebrationLayer.innerHTML = "";
+  const colors = ["#3767ff", "#13b36b", "#ffb020", "#ff6b6b", "#7c4dff"];
+
+  for (let index = 0; index < 36; index += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.background = colors[index % colors.length];
+    piece.style.setProperty("--drift", `${Math.round(Math.random() * 180 - 90)}px`);
+    piece.style.setProperty("--duration", `${(1.4 + Math.random() * 0.8).toFixed(2)}s`);
+    piece.style.transform = `rotate(${Math.round(Math.random() * 360)}deg)`;
+    celebrationLayer.append(piece);
+  }
+
+  window.setTimeout(() => {
+    celebrationLayer.innerHTML = "";
+  }, 1800);
+}
+
+function handleCounterAdjustment(amount) {
+  const actionLabel = amount > 0 ? "add 1 point" : "subtract 1 point";
+  const confirmed = window.confirm(`Are you sure you want to ${actionLabel}?`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  if (amount < 0 && completionCount === 0) {
+    setFormMessage("The counter is already at 0.", "warning");
+    return;
+  }
+
+  changeCompletionCount(amount);
+  setFormMessage(
+    amount > 0 ? "Nice work — 1 point added." : "1 point was removed.",
+    "success"
+  );
+}
+
+function handleTrainingCompleted() {
+  completeTrainingButton?.setAttribute("disabled", "disabled");
+  changeCompletionCount(1);
+  setFormMessage("Great job! You completed a training and earned 1 point.", "success");
+  launchCelebration();
+
+  window.setTimeout(() => {
+    closeTrainingModal();
+    completeTrainingButton?.removeAttribute("disabled");
+  }, 900);
+}
+
 function setEditorCollapsed(isCollapsed) {
   if (!editorContent || !toggleEditorButton) {
     return;
@@ -190,6 +274,7 @@ function openTrainingModal(training) {
     return;
   }
 
+  completeTrainingButton?.removeAttribute("disabled");
   modalTitle.textContent = training.title;
   modalContent.textContent = training.content;
   trainingModal.hidden = false;
@@ -524,6 +609,8 @@ cancelEditButton?.addEventListener("click", () => {
 });
 
 pickButton?.addEventListener("click", pickRandomTraining);
+addPointButton?.addEventListener("click", () => handleCounterAdjustment(1));
+subtractPointButton?.addEventListener("click", () => handleCounterAdjustment(-1));
 toggleEditorButton?.addEventListener("click", toggleEditorVisibility);
 toggleTrainingsButton?.addEventListener("click", toggleTrainingsVisibility);
 installButton?.addEventListener("click", handleInstallClick);
@@ -535,6 +622,7 @@ closeModalFooterButton?.addEventListener("click", (event) => {
   event.preventDefault();
   closeTrainingModal();
 });
+completeTrainingButton?.addEventListener("click", handleTrainingCompleted);
 trainingModal?.addEventListener("click", (event) => {
   if (event.target === trainingModal) {
     closeTrainingModal();
@@ -558,6 +646,7 @@ window.addEventListener("appinstalled", () => {
 });
 
 renderTrainings();
+updateCompletionCountDisplay();
 setEditorCollapsed(true);
 setTrainingsCollapsed(true);
 updatePickerPlaceholder();

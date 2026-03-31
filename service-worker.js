@@ -1,11 +1,11 @@
-const CACHE_NAME = "training-picker-v5";
+const CACHE_NAME = "training-picker-v6";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=20260331-3",
-  "./app.js?v=20260331-3",
-  "./manifest.webmanifest?v=20260331-3",
-  "./icons/icon.svg?v=20260331-3",
+  "./styles.css?v=20260331-4",
+  "./app.js?v=20260331-4",
+  "./manifest.webmanifest?v=20260331-4",
+  "./icons/icon.svg?v=20260331-4",
 ];
 
 self.addEventListener("install", (event) => {

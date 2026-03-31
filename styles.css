@@ -82,6 +82,58 @@ textarea {
   color: var(--muted);
 }
 
+.stats-panel {
+  margin-bottom: 1rem;
+}
+
+.counter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.counter-display {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.completion-count {
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.counter-label {
+  color: var(--muted);
+}
+
+.counter-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.counter-button {
+  font-weight: 700;
+}
+
+.counter-button.plus,
+.complete-button {
+  background: #e7f8ef;
+  color: var(--success);
+}
+
+.counter-button.minus {
+  background: #ffe8e8;
+  color: var(--danger);
+}
+
+.complete-button {
+  padding-inline: 1rem;
+}
+
 .layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -384,6 +436,42 @@ button:disabled {
   margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.celebration-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1500;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10vh;
+  width: 10px;
+  height: 18px;
+  border-radius: 3px;
+  opacity: 0;
+  animation: confetti-fall var(--duration, 1.8s) ease-in forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(720deg);
+  }
 }
 
 @media (max-width: 800px) {
@@ -411,14 +499,16 @@ button:disabled {
   .hero-actions,
   .form-actions,
   .card-actions,
-  .modal-actions {
+  .modal-actions,
+  .counter-actions {
     align-items: stretch;
   }
 
   .hero-actions > *,
   .form-actions > *,
   .card-actions > *,
-  .modal-actions > * {
+  .modal-actions > *,
+  .counter-actions > * {
     width: 100%;
   }
 
