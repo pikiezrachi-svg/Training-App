@@ -73,19 +73,31 @@
           </form>
         </section>
 
-        <section class="panel">
+        <section class="panel collapsible-panel">
           <div class="panel-header">
             <div>
               <p class="section-step">Step 2</p>
               <h2>Your saved trainings</h2>
             </div>
-            <span id="training-count" class="badge">0 trainings</span>
+            <div class="saved-training-tools">
+              <span id="training-count" class="badge">0 trainings</span>
+              <button
+                id="toggle-trainings"
+                class="button-secondary toggle-button"
+                type="button"
+                aria-expanded="true"
+              >
+                Hide list
+              </button>
+            </div>
           </div>
 
-          <div id="empty-state" class="empty-state">
-            You have not added any trainings yet.
+          <div id="trainings-content" class="collapsible-content">
+            <div id="empty-state" class="empty-state">
+              You have not added any trainings yet.
+            </div>
+            <ul id="training-list" class="training-list"></ul>
           </div>
-          <ul id="training-list" class="training-list"></ul>
         </section>
       </main>
 

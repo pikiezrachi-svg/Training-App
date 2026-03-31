@@ -9,6 +9,8 @@ const formMessage = document.getElementById("form-message");
 const trainingList = document.getElementById("training-list");
 const emptyState = document.getElementById("empty-state");
 const trainingCount = document.getElementById("training-count");
+const toggleTrainingsButton = document.getElementById("toggle-trainings");
+const trainingsContent = document.getElementById("trainings-content");
 const pickButton = document.getElementById("pick-button");
 const randomResult = document.getElementById("random-result");
 const installButton = document.getElementById("install-button");
@@ -74,6 +76,24 @@ function resetForm() {
   form.reset();
   saveButton.textContent = "Save training";
   cancelEditButton.hidden = true;
+}
+
+function setTrainingsCollapsed(isCollapsed) {
+  if (!trainingsContent || !toggleTrainingsButton) {
+    return;
+  }
+
+  trainingsContent.hidden = isCollapsed;
+  toggleTrainingsButton.textContent = isCollapsed ? "Show list" : "Hide list";
+  toggleTrainingsButton.setAttribute("aria-expanded", String(!isCollapsed));
+}
+
+function toggleTrainingsVisibility() {
+  if (!trainingsContent) {
+    return;
+  }
+
+  setTrainingsCollapsed(!trainingsContent.hidden);
 }
 
 function closeTrainingModal() {
@@ -345,6 +365,7 @@ cancelEditButton?.addEventListener("click", () => {
 });
 
 pickButton?.addEventListener("click", pickRandomTraining);
+toggleTrainingsButton?.addEventListener("click", toggleTrainingsVisibility);
 installButton?.addEventListener("click", handleInstallClick);
 closeModalButton?.addEventListener("click", (event) => {
   event.preventDefault();
