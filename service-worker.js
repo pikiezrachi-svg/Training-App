@@ -1,11 +1,11 @@
-const CACHE_NAME = "training-picker-v3";
+const CACHE_NAME = "training-picker-v4";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
-  "./manifest.webmanifest",
-  "./icons/icon.svg",
+  "./styles.css?v=20260331-2",
+  "./app.js?v=20260331-2",
+  "./manifest.webmanifest?v=20260331-2",
+  "./icons/icon.svg?v=20260331-2",
 ];
 
 self.addEventListener("install", (event) => {
@@ -35,18 +35,24 @@ self.addEventListener("fetch", (event) => {
 
   const isPageRequest =
     event.request.mode === "navigate" || event.request.destination === "document";
+  const sameOrigin = new URL(event.request.url).origin === self.location.origin;
+  const isVersionedAsset =
+    sameOrigin && ["script", "style", "manifest", "image"].includes(event.request.destination);
 
-  if (isPageRequest) {
+  if (isPageRequest || isVersionedAsset) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put("./index.html", responseClone);
+            cache.put(event.request, responseClone);
+            if (isPageRequest) {
+              cache.put("./index.html", responseClone.clone());
+            }
           });
           return networkResponse;
         })
-        .catch(() => caches.match("./index.html"))
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
     );
     return;
   }

@@ -1,4 +1,5 @@
 const STORAGE_KEY = "training-picker.trainings";
+const RECENT_PICKS_STORAGE_KEY = "training-picker.recent-picks";
 const RECENT_PICK_LIMIT = 2;
 
 const form = document.getElementById("training-form");
@@ -25,7 +26,7 @@ let trainings = loadTrainings();
 let editingId = null;
 let deferredInstallPrompt = null;
 let lastPickedTraining = null;
-let recentPickIds = [];
+let recentPickIds = loadRecentPickIds();
 
 function loadTrainings() {
   try {
@@ -40,6 +41,29 @@ function loadTrainings() {
 
 function persistTrainings() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trainings));
+}
+
+function loadRecentPickIds() {
+  try {
+    const stored = localStorage.getItem(RECENT_PICKS_STORAGE_KEY);
+    const parsed = stored ? JSON.parse(stored) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error("Failed to load recent picks", error);
+    return [];
+  }
+}
+
+function persistRecentPickIds() {
+  localStorage.setItem(RECENT_PICKS_STORAGE_KEY, JSON.stringify(recentPickIds));
+}
+
+function syncRecentPicksWithTrainings() {
+  const validIds = new Set(trainings.map((training) => training.id));
+  recentPickIds = recentPickIds
+    .filter((id) => validIds.has(id))
+    .slice(0, RECENT_PICK_LIMIT);
+  persistRecentPickIds();
 }
 
 function setFormMessage(message = "", type = "") {
@@ -127,6 +151,8 @@ function updatePickerPlaceholder() {
     randomResult.textContent = "Save at least one training to start picking.";
     pickButton.disabled = true;
     lastPickedTraining = null;
+    recentPickIds = [];
+    persistRecentPickIds();
     closeTrainingModal();
     return;
   }
@@ -149,6 +175,7 @@ function createActionButton(label, onClick, extraClass = "") {
 }
 
 function renderTrainings() {
+  syncRecentPicksWithTrainings();
   trainingList.innerHTML = "";
   trainingCount.textContent = formatCount(trainings.length);
 
@@ -235,6 +262,7 @@ function deleteTraining(id) {
   }
 
   recentPickIds = recentPickIds.filter((entryId) => entryId !== id);
+  persistRecentPickIds();
 
   renderTrainings();
   setFormMessage(`Deleted “${training.title}”.`, "success");
@@ -292,6 +320,7 @@ function rememberPickedTraining(trainingId) {
     0,
     RECENT_PICK_LIMIT
   );
+  persistRecentPickIds();
 }
 
 function pickRandomTraining() {
