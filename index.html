@@ -58,11 +58,33 @@
         </div>
       </section>
 
+      <section class="panel picker-panel">
+        <div class="panel-header">
+          <div>
+            <p class="section-step">Today</p>
+            <h2>Choose today’s training</h2>
+          </div>
+        </div>
+
+        <p class="picker-note">
+          The selected training opens in a focused reading window, so you do not tap
+          the random button by mistake while working out.
+        </p>
+
+        <button id="pick-button" class="pick-button" type="button">
+          Pick a random training
+        </button>
+
+        <div id="random-result" class="random-result empty-result">
+          Save at least one training to start picking.
+        </div>
+      </section>
+
       <main class="layout">
         <section class="panel collapsible-panel">
           <div class="panel-header">
             <div>
-              <p class="section-step">Step 1</p>
+              <p class="section-step">Build</p>
               <h2>Add or edit a training</h2>
             </div>
             <div class="saved-training-tools">
@@ -113,7 +135,7 @@
         <section class="panel collapsible-panel">
           <div class="panel-header">
             <div>
-              <p class="section-step">Step 2</p>
+              <p class="section-step">Library</p>
               <h2>Your saved trainings</h2>
             </div>
             <div class="saved-training-tools">
@@ -137,28 +159,6 @@
           </div>
         </section>
       </main>
-
-      <section class="panel picker-panel">
-        <div class="panel-header">
-          <div>
-            <p class="section-step">Step 3</p>
-            <h2>Choose today’s training</h2>
-          </div>
-        </div>
-
-        <p class="picker-note">
-          The selected training opens in a focused reading window, so you do not tap
-          the random button by mistake while working out.
-        </p>
-
-        <button id="pick-button" class="pick-button" type="button">
-          Pick a random training
-        </button>
-
-        <div id="random-result" class="random-result empty-result">
-          Save at least one training to start picking.
-        </div>
-      </section>
     </div>
 
     <div id="training-modal" class="modal-overlay" hidden>
