@@ -77,16 +77,26 @@ function resetForm() {
 }
 
 function closeTrainingModal() {
+  if (!trainingModal) {
+    return;
+  }
+
+  trainingModal.classList.remove("is-open");
   trainingModal.hidden = true;
   document.body.classList.remove("modal-open");
 }
 
 function openTrainingModal(training) {
+  if (!trainingModal || !modalTitle || !modalContent) {
+    return;
+  }
+
   modalTitle.textContent = training.title;
   modalContent.textContent = training.content;
   trainingModal.hidden = false;
+  trainingModal.classList.add("is-open");
   document.body.classList.add("modal-open");
-  closeModalButton.focus();
+  closeModalButton?.focus();
 }
 
 function updatePickerPlaceholder() {
@@ -329,23 +339,29 @@ form.addEventListener("submit", (event) => {
   resetForm();
 });
 
-cancelEditButton.addEventListener("click", () => {
+cancelEditButton?.addEventListener("click", () => {
   resetForm();
   setFormMessage("Edit cancelled.");
 });
 
-pickButton.addEventListener("click", pickRandomTraining);
-installButton.addEventListener("click", handleInstallClick);
-closeModalButton.addEventListener("click", closeTrainingModal);
-closeModalFooterButton.addEventListener("click", closeTrainingModal);
-trainingModal.addEventListener("click", (event) => {
+pickButton?.addEventListener("click", pickRandomTraining);
+installButton?.addEventListener("click", handleInstallClick);
+closeModalButton?.addEventListener("click", (event) => {
+  event.preventDefault();
+  closeTrainingModal();
+});
+closeModalFooterButton?.addEventListener("click", (event) => {
+  event.preventDefault();
+  closeTrainingModal();
+});
+trainingModal?.addEventListener("click", (event) => {
   if (event.target === trainingModal) {
     closeTrainingModal();
   }
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !trainingModal.hidden) {
+  if (event.key === "Escape" && trainingModal && !trainingModal.hidden) {
     closeTrainingModal();
   }
 });

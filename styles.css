@@ -315,6 +315,18 @@ button:disabled {
   place-items: center;
   padding: 1rem;
   z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease;
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-overlay[hidden] {
+  display: none !important;
 }
 
 .modal-window {
